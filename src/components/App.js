@@ -8,6 +8,7 @@ import Pagination from "./Pagination";
 import queryString from "query-string";
 import PostFiltersForm from "./PostFiltersForm";
 import "../App.css";
+import Clock from "./Clock";
 function App() {
   const toDoList = [
     { id: 1, title: "La mot thang con trai", age: 8 },
@@ -15,6 +16,8 @@ function App() {
     { id: 3, title: "Song gio", age: 22 },
   ];
 
+  // Clock
+  const [showClock, setShowClock] = useState(true);
   const [todoList, setTodoList] = useState(toDoList);
   // PostList
   const [postList, setPostList] = useState([]);
@@ -97,12 +100,20 @@ function App() {
       {/* <ColorBox /> */}
       {/* <TodoForm onSubmitForm={onRetriveValue} />
       <TodoList todos={todoList} onTodoClick={removeToDoItem} /> */}
-      <PostFiltersForm handleSubmitForm={handleSubmit} />
+      {showClock ? <Clock /> : ""}
+      <div
+        className="ui button primary"
+        onClick={() => setShowClock(!showClock)}
+      >
+        Show/Hide Clock
+      </div>
+
+      {/* <PostFiltersForm handleSubmitForm={handleSubmit} />
       <PostList posts={postList} />
       <Pagination
         pagination={pagination}
         onPageChange={(newPage) => handlePageChangeP(newPage)}
-      />
+      /> */}
     </div>
   );
 }
