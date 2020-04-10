@@ -15,11 +15,8 @@ function PostList(props) {
     return (
       <ul key={post.id} className="ui segment">
         <li>
-          <div>
-            <p>
-              Post: {index} {post.title}
-            </p>
-          </div>
+          <p>{post.title}</p>
+          <p>{post.author}</p>
         </li>
       </ul>
     );

@@ -1,6 +1,9 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Packet using
+
+- query-string
+  --> covert {\_limit: 10, \_page: 1} --> \_limit=10&\_page=1
 
 In the project directory, you can run:
 

@@ -4,7 +4,9 @@ import { v4 as uuidv4 } from "uuid";
 import TodoList from "./TodoList";
 import TodoForm from "./TodoForm";
 import PostList from "./PostList";
-
+import Pagination from "./Pagination";
+import queryString from "query-string";
+import PostFiltersForm from "./PostFiltersForm";
 import "../App.css";
 function App() {
   const toDoList = [
@@ -12,29 +14,39 @@ function App() {
     { id: 2, title: "Nguoi thu ba", age: 18 },
     { id: 3, title: "Song gio", age: 22 },
   ];
+
   const [todoList, setTodoList] = useState(toDoList);
   // PostList
-  const initalState = [];
-  const [postList, setPostList] = useState(initalState);
+  const [postList, setPostList] = useState([]);
+  // Pagination
+  const [pagination, setPagination] = useState({
+    _page: "",
+    _limit: "", //So item co trong 1 page
+    _totalRows: "", //Tong so item
+  });
+  // filters
+  const [filters, setFilters] = useState({
+    _limit: 10,
+    _page: 1,
+  });
+  //
+  const paramsString = queryString.stringify(filters);
   useEffect(() => {
     async function fetchPost() {
       try {
-        const requestURL =
-          "http://js-post-api.herokuapp.com/api/posts?_limit=10&_page=1";
+        const requestURL = `http://js-post-api.herokuapp.com/api/posts?${paramsString}`;
         const response = await fetch(requestURL);
         const responseJSON = await response.json();
-        setPostList(responseJSON.data);
+        const { data, pagination } = responseJSON;
+        setPostList(data);
+        setPagination(pagination);
       } catch (error) {
         console.log("Error: ", error.message);
       }
     }
-    console.log("post list effect");
     fetchPost();
-  }, []);
-  console.log("render");
-  useEffect(() => {
-    console.log("Todo list effect");
-  });
+  }, [filters]);
+
   useEffect(() => {
     if (localStorage && localStorage.getItem("todoList")) {
       //kiểm tra có tồn tại localStorage và localStorage có dữ liệu của key là TasksKey không
@@ -42,7 +54,23 @@ function App() {
       setTodoList(todoList);
     }
   }, []);
-
+  // Nhận newPage từ component Pagination (Con)
+  function handlePageChangeP(newPage) {
+    setFilters({
+      ...filters,
+      _page: newPage,
+    });
+  }
+  function handleSubmit(newFilters) {
+    console.log("handleSubmit", newFilters);
+    setFilters({
+      ...filters,
+      _page: 1,
+      // Server ben backend quy dinh
+      title_like: newFilters.term,
+      // author_like: newFilters.term,
+    });
+  }
   function removeToDoItem(todo) {
     const index = todoList.findIndex((x) => x.id === todo.id);
     if (index < 0) return;
@@ -69,7 +97,12 @@ function App() {
       {/* <ColorBox /> */}
       {/* <TodoForm onSubmitForm={onRetriveValue} />
       <TodoList todos={todoList} onTodoClick={removeToDoItem} /> */}
+      <PostFiltersForm handleSubmitForm={handleSubmit} />
       <PostList posts={postList} />
+      <Pagination
+        pagination={pagination}
+        onPageChange={(newPage) => handlePageChangeP(newPage)}
+      />
     </div>
   );
 }
